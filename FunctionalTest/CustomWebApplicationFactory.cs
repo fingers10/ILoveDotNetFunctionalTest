@@ -5,30 +5,34 @@ using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace FunctionalTest;
 public class CustomWebApplicationFactory
 {
-	private static WebApplicationFactory<Program> Application
+	private static WebApplicationFactory<Program> Application(
+		IConfiguration? configuration = null,
+		Action<IServiceCollection>? testServices = null)
 		=> new WebApplicationFactory<Program>()
 			.WithWebHostBuilder(builder =>
 			{
 				builder.UseEnvironment("Test");
 
+				if (configuration is not null)
+				{
+					builder.UseConfiguration(configuration);
+				}
+
 				builder.ConfigureTestServices(async services =>
 				{
-					var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(IExternalAPIService));
-
-					if (descriptor != null)
+					if (testServices is not null)
 					{
-						services.Remove(descriptor);
+						testServices(services);
 					}
 
-					services.AddTransient<IExternalAPIService, FakeExternalAPIService>();
-
-					descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(WeatherForecastDbContext));
+					var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(WeatherForecastDbContext));
 
 					if (descriptor != null)
 					{
@@ -68,9 +72,13 @@ public class CustomWebApplicationFactory
 				});
 			});
 
-	protected static async Task RunTest(Func<HttpClient, Task> test)
+	protected static async Task RunTest(
+		Func<HttpClient, Task> test,
+		IConfiguration? configuration = null,
+		Action<IServiceCollection>? services = null)
 	{
-		var client = Application.CreateClient(new WebApplicationFactoryClientOptions
+		var client = Application(configuration, services)
+			.CreateClient(new WebApplicationFactoryClientOptions
 		{
 			AllowAutoRedirect = false
 		});
