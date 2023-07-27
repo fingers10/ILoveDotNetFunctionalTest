@@ -1,4 +1,5 @@
 using API.DbContexts;
+using API.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -21,7 +22,7 @@ public class WeatherForecastController : ControllerBase
 	[HttpGet(Name = "GetWeatherForecast")]
 	public IEnumerable<WeatherForecast> Get()
 	{
-		return Enumerable.Range(1, 5).Select(index => new WeatherForecast
+		return Enumerable.Range(1, 5).Select(index => new WeatherForecast	
 		{
 			Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
 			TemperatureC = Random.Shared.Next(-20, 55),
@@ -35,4 +36,10 @@ public class WeatherForecastController : ControllerBase
 	{
 		return dbContext.WeatherForecasts.ToArray();
 	}
+
+    [HttpGet("fromapi", Name = "GetWeatherForecastFromAPI")]
+    public async Task<WeatherForecast> GetFromAPI([FromServices] IExternalAPIService apiService)
+    {
+        return await apiService.GetWeatherForevast();
+    }
 }

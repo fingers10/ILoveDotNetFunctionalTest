@@ -1,5 +1,6 @@
 ﻿using API.DbContexts;
 using API.Services;
+using FunctionalTest.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -12,7 +13,7 @@ using Microsoft.Extensions.Logging;
 namespace FunctionalTest;
 public class CustomWebApplicationFactory
 {
-	private static WebApplicationFactory<Program> Application(
+    private static WebApplicationFactory<Program> Application(
 		IConfiguration? configuration = null,
 		Action<IServiceCollection>? testServices = null)
 		=> new WebApplicationFactory<Program>()
@@ -20,7 +21,14 @@ public class CustomWebApplicationFactory
 			{
 				builder.UseEnvironment("Test");
 
-				if (configuration is not null)
+                var projectDir = Directory.GetCurrentDirectory();
+
+                builder.ConfigureAppConfiguration((context, conf) =>
+                {
+                    conf.AddJsonFile(Path.Combine(projectDir, "appsettings.Test.json"));
+                });
+
+                if (configuration is not null)
 				{
 					builder.UseConfiguration(configuration);
 				}

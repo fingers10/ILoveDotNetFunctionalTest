@@ -3,4 +3,6 @@
 public interface IExternalAPIService
 {
 	string GetResult();
+
+	Task<WeatherForecast> GetWeatherForevast();
 }
