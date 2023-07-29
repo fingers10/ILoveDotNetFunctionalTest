@@ -4,12 +4,12 @@ using API.Services;
 namespace FunctionalTest;
 internal class FakeExternalAPIService : IExternalAPIService
 {
-	public string GetResult()
-	{
-		return "Hello from fake external API";
-	}
+    public string GetResult()
+    {
+        return "Hello from fake external API";
+    }
 
-    public Task<WeatherForecast> GetWeatherForevast()
+    public Task<WeatherForecast> GetWeatherForecast()
     {
         throw new NotImplementedException();
     }

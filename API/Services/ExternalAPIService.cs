@@ -1,5 +1,4 @@
-﻿using System.Text.Json;
-using System.Text.Json.Serialization;
+﻿using System.Text.Json.Serialization;
 
 namespace API.Services;
 
@@ -17,7 +16,7 @@ public class ExternalAPIService : IExternalAPIService
         return "Hello from external API";
     }
 
-    public async Task<WeatherForecast> GetWeatherForevast()
+    public async Task<WeatherForecast> GetWeatherForecast()
     {
         var client = httpClientFactory.CreateClient("WeatherClient");
 

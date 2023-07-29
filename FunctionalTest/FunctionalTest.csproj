@@ -34,7 +34,7 @@
     <None Remove="Services\" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Services\" />
+    <Folder Include="Fixtures\" />
   </ItemGroup>
   <ItemGroup>
     <None Update="appsettings.Test.json">

@@ -1,6 +1,4 @@
 ﻿using API.DbContexts;
-using API.Services;
-using FunctionalTest.Services;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -14,12 +12,12 @@ namespace FunctionalTest;
 public class CustomWebApplicationFactory
 {
     private static WebApplicationFactory<Program> Application(
-		IConfiguration? configuration = null,
-		Action<IServiceCollection>? testServices = null)
-		=> new WebApplicationFactory<Program>()
-			.WithWebHostBuilder(builder =>
-			{
-				builder.UseEnvironment("Test");
+        IConfiguration? configuration = null,
+        Action<IServiceCollection>? testServices = null)
+        => new WebApplicationFactory<Program>()
+            .WithWebHostBuilder(builder =>
+            {
+                builder.UseEnvironment("Test");
 
                 var projectDir = Directory.GetCurrentDirectory();
 
@@ -29,67 +27,67 @@ public class CustomWebApplicationFactory
                 });
 
                 if (configuration is not null)
-				{
-					builder.UseConfiguration(configuration);
-				}
+                {
+                    builder.UseConfiguration(configuration);
+                }
 
-				builder.ConfigureTestServices(async services =>
-				{
-					if (testServices is not null)
-					{
-						testServices(services);
-					}
+                builder.ConfigureTestServices(async services =>
+                {
+                    if (testServices is not null)
+                    {
+                        testServices(services);
+                    }
 
-					var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(WeatherForecastDbContext));
+                    var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(WeatherForecastDbContext));
 
-					if (descriptor != null)
-					{
-						services.Remove(descriptor);
-					}
+                    if (descriptor != null)
+                    {
+                        services.Remove(descriptor);
+                    }
 
-					var connectionStringBuilder = new SqliteConnectionStringBuilder { DataSource = ":memory:" };
-					var connection = new SqliteConnection(connectionStringBuilder.ToString());
+                    var connectionStringBuilder = new SqliteConnectionStringBuilder { DataSource = ":memory:" };
+                    var connection = new SqliteConnection(connectionStringBuilder.ToString());
 
-					var dbContextOptions = new DbContextOptionsBuilder<WeatherForecastDbContext>()
-											.UseSqlite(connection)
-											.Options;
+                    var dbContextOptions = new DbContextOptionsBuilder<WeatherForecastDbContext>()
+                                            .UseSqlite(connection)
+                                            .Options;
 
-					services.AddScoped(options => new WeatherForecastDbContext(dbContextOptions));
+                    services.AddScoped(options => new WeatherForecastDbContext(dbContextOptions));
 
-					await connection.CloseAsync();
+                    await connection.CloseAsync();
 
-					var sp = services.BuildServiceProvider();
+                    var sp = services.BuildServiceProvider();
 
-					using var scope = sp.CreateScope();
-					var scopedServices = scope.ServiceProvider;
-					var db = scopedServices.GetRequiredService<WeatherForecastDbContext>();
-					var logger = scopedServices.GetRequiredService<ILogger<CustomWebApplicationFactory>>();
+                    using var scope = sp.CreateScope();
+                    var scopedServices = scope.ServiceProvider;
+                    var db = scopedServices.GetRequiredService<WeatherForecastDbContext>();
+                    var logger = scopedServices.GetRequiredService<ILogger<CustomWebApplicationFactory>>();
 
-					try
-					{
-						await db.Database.OpenConnectionAsync();
-						await db.Database.EnsureCreatedAsync();
-						DatabaseHelper.ResetDbForTests(db);
-						DatabaseHelper.InitializeDbForTests(db);
-					}
-					catch (Exception ex)
-					{
-						logger.LogError(ex, $"An error occurred seeding the database with test data. Error: {ex.Message}");
-						throw;
-					}
-				});
-			});
+                    try
+                    {
+                        await db.Database.OpenConnectionAsync();
+                        await db.Database.EnsureCreatedAsync();
+                        DatabaseHelper.ResetDbForTests(db);
+                        DatabaseHelper.InitializeDbForTests(db);
+                    }
+                    catch (Exception ex)
+                    {
+                        logger.LogError(ex, $"An error occurred seeding the database with test data. Error: {ex.Message}");
+                        throw;
+                    }
+                });
+            });
 
-	protected static async Task RunTest(
-		Func<HttpClient, Task> test,
-		IConfiguration? configuration = null,
-		Action<IServiceCollection>? services = null)
-	{
-		var client = Application(configuration, services)
-			.CreateClient(new WebApplicationFactoryClientOptions
-		{
-			AllowAutoRedirect = false
-		});
-		await test(client);
-	}
+    protected static async Task RunTest(
+        Func<HttpClient, Task> test,
+        IConfiguration? configuration = null,
+        Action<IServiceCollection>? services = null)
+    {
+        var client = Application(configuration, services)
+            .CreateClient(new WebApplicationFactoryClientOptions
+            {
+                AllowAutoRedirect = false
+            });
+        await test(client);
+    }
 }

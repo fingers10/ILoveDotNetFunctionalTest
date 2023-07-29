@@ -2,7 +2,7 @@
 
 public interface IExternalAPIService
 {
-	string GetResult();
+    string GetResult();
 
-	Task<WeatherForecast> GetWeatherForevast();
+    Task<WeatherForecast> GetWeatherForecast();
 }

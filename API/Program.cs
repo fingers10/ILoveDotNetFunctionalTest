@@ -1,8 +1,7 @@
-using System.Net.Mime;
 using API.DbContexts;
 using API.Services;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Net.Http.Headers;
+using System.Net.Mime;
 
 var builder = WebApplication.CreateBuilder(args);
 
