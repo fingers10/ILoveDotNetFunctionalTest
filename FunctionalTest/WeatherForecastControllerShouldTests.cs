@@ -88,6 +88,17 @@ public class WeatherForecastControllerShouldTests : CustomWebApplicationFactory,
             response.StatusCode.Should().Be(HttpStatusCode.OK);
             result!.TemperatureC.Should().Be((int)expectedWeather.Current_Weather.Temperature);
             result.Date.Should().Be(DateOnly.FromDateTime(DateTime.Now));
+        },
+        null,
+        (services) =>
+        {
+            var descriptor = services.SingleOrDefault(d => d.ServiceType == typeof(AuthClaimsProvider));
+
+            if (descriptor != null)
+            {
+                services.Remove(descriptor);
+                services.AddScoped(_ => AuthClaimsProvider.WithAdminClaims());
+            }
         });
     }
 }

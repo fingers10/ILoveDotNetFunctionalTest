@@ -1,5 +1,7 @@
 using API.DbContexts;
 using API.Services;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Net.Http.Headers;
 using System.Net.Mime;
 
@@ -7,7 +9,16 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
-builder.Services.AddControllers();
+var requireAuthenticatedUserPolicy = new AuthorizationPolicyBuilder()
+             .RequireAuthenticatedUser()
+             .Build();
+
+builder.Services.AddControllers(options =>
+{
+    options.Filters.Add(new AuthorizeFilter(requireAuthenticatedUserPolicy));
+});
+builder.Services.AddAuthentication().AddJwtBearer();
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

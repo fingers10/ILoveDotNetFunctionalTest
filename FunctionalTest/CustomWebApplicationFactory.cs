@@ -1,4 +1,5 @@
 ﻿using API.DbContexts;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -7,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using System.Net.Http.Headers;
 
 namespace FunctionalTest;
 public class CustomWebApplicationFactory
@@ -33,6 +35,11 @@ public class CustomWebApplicationFactory
 
                 builder.ConfigureTestServices(async services =>
                 {
+                    services.AddAuthentication("Test")
+                    .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>("Test", options => { });
+
+                    services.AddScoped(_ => AuthClaimsProvider.WithGuestClaims());
+
                     if (testServices is not null)
                     {
                         testServices(services);
@@ -88,6 +95,7 @@ public class CustomWebApplicationFactory
             {
                 AllowAutoRedirect = false
             });
+        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Test");
         await test(client);
     }
 }
