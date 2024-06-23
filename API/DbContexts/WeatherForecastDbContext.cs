@@ -11,7 +11,7 @@ public class WeatherForecastDbContext(DbContextOptions<WeatherForecastDbContext>
         base.OnConfiguring(optionsBuilder);
         if (!optionsBuilder.IsConfigured)
         {
-            optionsBuilder.UseInMemoryDatabase("ILoveDotNetFunctionalTest");
+            optionsBuilder.UseNpgsql("Host=localhost;Database=FunctionalTest;User id=postgres;Password=pg9962663633;TrustServerCertificate=true");
         }
     }
 
@@ -24,7 +24,7 @@ public class WeatherForecastDbContext(DbContextOptions<WeatherForecastDbContext>
                             Id = 1,
                             Date = DateOnly.FromDateTime(DateTime.Now.AddDays(1)),
                             TemperatureC = 1,
-                            Summary = "Freezing"
+                            Summary = "Freezing from database"
                         });
 
         base.OnModelCreating(modelBuilder);

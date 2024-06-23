@@ -1,3 +1,4 @@
+using API.DbContexts;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -22,17 +23,9 @@ public class WeatherForecastController() : ControllerBase
         .ToArray();
     }
 
-    //[Authorize(Roles = "Guest")]
-    //[HttpGet("fromdatabase", Name = "GetWeatherForecastFromDatabase")]
-    //public IEnumerable<WeatherForecast> GetFromDatabase([FromServices] WeatherForecastDbContext dbContext)
-    //{
-    //    return [.. dbContext.WeatherForecasts];
-    //}
-
-    //[Authorize(Roles = "Admin")]
-    //[HttpGet("fromapi", Name = "GetWeatherForecastFromAPI")]
-    //public async Task<WeatherForecast> GetFromAPI([FromServices] IExternalAPIService apiService)
-    //{
-    //    return await apiService.GetWeatherForecast();
-    //}
+    [HttpGet("fromdatabase", Name = "GetWeatherForecastFromDatabase")]
+    public IEnumerable<WeatherForecast> GetFromDatabase([FromServices] WeatherForecastDbContext dbContext)
+    {
+        return [.. dbContext.WeatherForecasts];
+    }
 }

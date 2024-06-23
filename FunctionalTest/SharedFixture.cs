@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 namespace FunctionalTest;
 public class SharedFixture : IAsyncLifetime
 {
-    public const string DatabaseName = "InMemTestDb";
+    public const string DatabaseName = "InMemoryTestDb";
     public WeatherForecastDbContext DbContext = default!;
 
     public async Task InitializeAsync()

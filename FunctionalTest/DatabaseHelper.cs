@@ -13,7 +13,7 @@ public static class DatabaseHelper
                 Id = 1,
                 Date = DateOnly.FromDateTime(DateTime.Now.AddDays(1)),
                 TemperatureC = 1,
-                Summary = "Freezing from test"
+                Summary = "Freezing from database"
             });
         await db.SaveChangesAsync();
     }
