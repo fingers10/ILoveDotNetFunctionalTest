@@ -2,14 +2,9 @@
 
 namespace API.Services;
 
-public class ExternalAPIService : IExternalAPIService
+public class ExternalAPIService(IHttpClientFactory httpClientFactory) : IExternalAPIService
 {
-    private readonly IHttpClientFactory httpClientFactory;
-
-    public ExternalAPIService(IHttpClientFactory httpClientFactory)
-    {
-        this.httpClientFactory = httpClientFactory;
-    }
+    private readonly IHttpClientFactory httpClientFactory = httpClientFactory;
 
     public string GetResult()
     {

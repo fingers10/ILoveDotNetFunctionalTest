@@ -1,24 +1,14 @@
-using API.DbContexts;
-using API.Services;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
 [ApiController]
 [Route("[controller]")]
-public class WeatherForecastController : ControllerBase
+public class WeatherForecastController() : ControllerBase
 {
-    private static readonly string[] Summaries = new[]
-    {
+    private static readonly string[] Summaries =
+    [
         "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
-
-    private readonly ILogger<WeatherForecastController> _logger;
-
-    public WeatherForecastController(ILogger<WeatherForecastController> logger)
-    {
-        _logger = logger;
-    }
+    ];
 
     [HttpGet(Name = "GetWeatherForecast")]
     public IEnumerable<WeatherForecast> Get()
@@ -32,17 +22,17 @@ public class WeatherForecastController : ControllerBase
         .ToArray();
     }
 
-    [Authorize(Roles = "Guest")]
-    [HttpGet("fromdatabase", Name = "GetWeatherForecastFromDatabase")]
-    public IEnumerable<WeatherForecast> GetFromDatabase([FromServices] WeatherForecastDbContext dbContext)
-    {
-        return dbContext.WeatherForecasts.ToArray();
-    }
+    //[Authorize(Roles = "Guest")]
+    //[HttpGet("fromdatabase", Name = "GetWeatherForecastFromDatabase")]
+    //public IEnumerable<WeatherForecast> GetFromDatabase([FromServices] WeatherForecastDbContext dbContext)
+    //{
+    //    return [.. dbContext.WeatherForecasts];
+    //}
 
-    [Authorize(Roles = "Admin")]
-    [HttpGet("fromapi", Name = "GetWeatherForecastFromAPI")]
-    public async Task<WeatherForecast> GetFromAPI([FromServices] IExternalAPIService apiService)
-    {
-        return await apiService.GetWeatherForecast();
-    }
+    //[Authorize(Roles = "Admin")]
+    //[HttpGet("fromapi", Name = "GetWeatherForecastFromAPI")]
+    //public async Task<WeatherForecast> GetFromAPI([FromServices] IExternalAPIService apiService)
+    //{
+    //    return await apiService.GetWeatherForecast();
+    //}
 }

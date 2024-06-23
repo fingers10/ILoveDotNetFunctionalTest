@@ -2,13 +2,9 @@
 
 namespace API.DbContexts;
 
-public class WeatherForecastDbContext : DbContext
+public class WeatherForecastDbContext(DbContextOptions<WeatherForecastDbContext> options) : DbContext(options)
 {
     public DbSet<WeatherForecast> WeatherForecasts { get; set; }
-
-    public WeatherForecastDbContext(DbContextOptions<WeatherForecastDbContext> options) : base(options)
-    {
-    }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
