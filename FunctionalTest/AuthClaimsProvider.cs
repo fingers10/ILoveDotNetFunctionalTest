@@ -12,7 +12,7 @@ public class AuthClaimsProvider
 
     public AuthClaimsProvider()
     {
-        Claims = new List<Claim>();
+        Claims = [];
     }
 
     public static AuthClaimsProvider WithGuestClaims()

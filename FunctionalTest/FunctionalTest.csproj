@@ -31,9 +31,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="Services\" />
-  </ItemGroup>
-  <ItemGroup>
     <Folder Include="Fixtures\" />
   </ItemGroup>
   <ItemGroup>

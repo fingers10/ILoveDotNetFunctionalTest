@@ -1,7 +1,6 @@
 using API.DbContexts;
 using API.Services;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.Net.Http.Headers;
 using System.Net.Mime;
 
@@ -15,9 +14,9 @@ var requireAuthenticatedUserPolicy = new AuthorizationPolicyBuilder()
 
 builder.Services.AddControllers(options =>
 {
-    options.Filters.Add(new AuthorizeFilter(requireAuthenticatedUserPolicy));
+    //options.Filters.Add(new AuthorizeFilter(requireAuthenticatedUserPolicy));
 });
-builder.Services.AddAuthentication().AddJwtBearer();
+//builder.Services.AddAuthentication().AddJwtBearer();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -42,16 +41,16 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
-app.UseAuthorization();
+//app.UseAuthorization();
 
 app.MapControllers();
 
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<WeatherForecastDbContext>();
-    context.Database.EnsureCreated();
-}
+//using (var scope = app.Services.CreateScope())
+//{
+//    var services = scope.ServiceProvider;
+//    var context = services.GetRequiredService<WeatherForecastDbContext>();
+//    await context.Database.EnsureCreatedAsync();
+//}
 
 app.Run();
 

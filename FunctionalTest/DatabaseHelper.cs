@@ -5,9 +5,9 @@ namespace FunctionalTest;
 
 public static class DatabaseHelper
 {
-    public static void InitializeDbForTests(WeatherForecastDbContext db)
+    public static async Task InitializeDbForTestsAsync(WeatherForecastDbContext db)
     {
-        db.WeatherForecasts.Add(
+        await db.WeatherForecasts.AddAsync(
             new WeatherForecast
             {
                 Id = 1,
@@ -15,12 +15,12 @@ public static class DatabaseHelper
                 TemperatureC = 1,
                 Summary = "Freezing from test"
             });
-        db.SaveChanges();
+        await db.SaveChangesAsync();
     }
 
-    public static void ResetDbForTests(WeatherForecastDbContext db)
+    public static async Task ResetDbForTestsAsync(WeatherForecastDbContext db)
     {
         db.WeatherForecasts.RemoveRange(db.WeatherForecasts);
-        db.SaveChanges();
+        await db.SaveChangesAsync();
     }
 }
