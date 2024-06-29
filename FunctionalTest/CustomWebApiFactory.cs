@@ -19,17 +19,21 @@ public class CustomWebApiFactory(SharedFixture fixture) : WebApplicationFactory<
             var ctx = services.SingleOrDefault(d => d.ServiceType == typeof(WeatherForecastDbContext));
             services.Remove(ctx!);
 
-            var connectionStringBuilder = new SqliteConnectionStringBuilder
-            {
-                DataSource = SharedFixture.DatabaseName,
-                Mode = SqliteOpenMode.Memory,
-                Cache = SqliteCacheMode.Shared
-            };
-            var connection = new SqliteConnection(connectionStringBuilder.ToString());
+            //var connectionStringBuilder = new SqliteConnectionStringBuilder
+            //{
+            //    DataSource = SharedFixture.DatabaseName,
+            //    Mode = SqliteOpenMode.Memory,
+            //    Cache = SqliteCacheMode.Shared
+            //};
+            //var connection = new SqliteConnection(connectionStringBuilder.ToString());
 
-            // SQLite
+            //// SQLite
+            //services.AddDbContext<WeatherForecastDbContext>(opts =>
+            //    opts.UseSqlite(connectionStringBuilder.ToString()));
+
+            // PostgreSQL
             services.AddDbContext<WeatherForecastDbContext>(opts =>
-                opts.UseSqlite(connectionStringBuilder.ToString()));
+                opts.UseNpgsql(SharedFixture.PostgresConnectionString));
         });
     }
 }

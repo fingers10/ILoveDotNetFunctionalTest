@@ -25,13 +25,10 @@ app.UseHttpsRedirection();
 
 app.MapControllers();
 
-if (!builder.Environment.IsEnvironment("Test"))
-{
-    using var scope = app.Services.CreateScope();
-    var services = scope.ServiceProvider;
-    var context = services.GetRequiredService<WeatherForecastDbContext>();
-    await context.Database.MigrateAsync();
-}
+using var scope = app.Services.CreateScope();
+var services = scope.ServiceProvider;
+var context = services.GetRequiredService<WeatherForecastDbContext>();
+await context.Database.MigrateAsync();
 
 app.Run();
 
