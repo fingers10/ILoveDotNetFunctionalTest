@@ -1,4 +1,5 @@
 using API.DbContexts;
+using API.Services;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -27,5 +28,11 @@ public class WeatherForecastController() : ControllerBase
     public IEnumerable<WeatherForecast> GetFromDatabase([FromServices] WeatherForecastDbContext dbContext)
     {
         return [.. dbContext.WeatherForecasts];
+    }
+
+    [HttpGet("fromapi", Name = "GetWeatherForecastFromAPI")]
+    public async Task<WeatherForecast> GetFromAPI([FromServices] IExternalAPIService apiService)
+    {
+        return await apiService.GetWeatherForecast();
     }
 }

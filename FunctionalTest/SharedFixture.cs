@@ -2,6 +2,8 @@
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Testcontainers.PostgreSql;
+using WireMock.Server;
+using WireMock.Settings;
 
 namespace FunctionalTest;
 public class SharedFixture : IAsyncLifetime
@@ -15,9 +17,25 @@ public class SharedFixture : IAsyncLifetime
         .WithUsername("postgres")
         .WithPassword("postgres")
         .Build();
+    public WireMockServer WeatherService = default!;
+
+    // WireMock for Weather Service --------------------
+    public string WeatherServiceUrl { get; private set; } = null!;
+
+    private string StartWireMockForWeatherService()
+    {
+        WeatherService = WireMockServer.Start(new WireMockServerSettings
+        {
+            UseSSL = false
+        });
+
+        return WeatherService.Urls[0];
+    }
 
     public async Task InitializeAsync()
     {
+        WeatherServiceUrl = StartWireMockForWeatherService();
+
         // PostgreSQL
         await _dbContainer.StartAsync();
 
@@ -71,5 +89,10 @@ public class SharedFixture : IAsyncLifetime
             await _dbContainer.DisposeAsync();
         }
 
+        if (WeatherService is not null)
+        {
+            WeatherService.Stop();
+            WeatherService.Dispose();
+        }
     }
 }

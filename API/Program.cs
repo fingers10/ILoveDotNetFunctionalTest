@@ -1,5 +1,8 @@
 using API.DbContexts;
+using API.Services;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Net.Http.Headers;
+using System.Net.Mime;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +14,13 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddDbContext<WeatherForecastDbContext>();
+builder.Services.AddScoped<IExternalAPIService, ExternalAPIService>();
+builder.Services.AddHttpClient("WeatherClient", client =>
+{
+    client.BaseAddress = new Uri(builder.Configuration.GetValue<string>("WeatherAPIUrl")!);
+    client.DefaultRequestHeaders.Clear();
+    client.DefaultRequestHeaders.Add(HeaderNames.Accept, MediaTypeNames.Application.Json);
+});
 
 var app = builder.Build();
 
