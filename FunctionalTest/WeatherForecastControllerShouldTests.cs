@@ -27,7 +27,8 @@ public class WeatherForecastControllerShouldTests(
     {
         var expectedWeatherForecast = await Database.WeatherForecasts.FirstAsync();
 
-        var result = await Client.GetJsonResultAsync<List<WeatherForecast>>("/weatherforecast/fromdatabase", HttpStatusCode.OK, outputHelper);
+        using var client = Factory.CreateClientWithClaim(AuthClaimsProvider.WithAdminClaims());
+        var result = await client.GetJsonResultAsync<List<WeatherForecast>>("/weatherforecast/fromdatabase", HttpStatusCode.OK, outputHelper);
         result.Count.Should().Be(1);
         result[0].Should().BeEquivalentTo(expectedWeatherForecast);
     }
@@ -40,7 +41,8 @@ public class WeatherForecastControllerShouldTests(
             .Given(Request.Create().WithPath("/v1/forecast").UsingGet())
             .RespondWith(Response.Create().WithStatusCode(HttpStatusCode.OK).WithBodyAsJson(expectedWeather));
 
-        var result = await Client.GetJsonResultAsync<WeatherForecast>("/weatherforecast/fromapi", HttpStatusCode.OK, outputHelper);
+        using var client = Factory.CreateClientWithClaim(AuthClaimsProvider.WithGuestClaims());
+        var result = await client.GetJsonResultAsync<WeatherForecast>("/weatherforecast/fromapi", HttpStatusCode.OK, outputHelper);
         
         result.Should().NotBeNull();
         result.TemperatureC.Should().Be((int)expectedWeather.Current_Weather.Temperature);

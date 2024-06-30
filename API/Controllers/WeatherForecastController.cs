@@ -1,5 +1,6 @@
 using API.DbContexts;
 using API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers;
@@ -12,6 +13,7 @@ public class WeatherForecastController() : ControllerBase
         "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
     ];
 
+    [Authorize]
     [HttpGet(Name = "GetWeatherForecast")]
     public IEnumerable<WeatherForecast> Get()
     {
@@ -24,12 +26,14 @@ public class WeatherForecastController() : ControllerBase
         .ToArray();
     }
 
+    [Authorize(Roles = "Admin")]
     [HttpGet("fromdatabase", Name = "GetWeatherForecastFromDatabase")]
     public IEnumerable<WeatherForecast> GetFromDatabase([FromServices] WeatherForecastDbContext dbContext)
     {
         return [.. dbContext.WeatherForecasts];
     }
 
+    [Authorize(Roles = "Guest")]
     [HttpGet("fromapi", Name = "GetWeatherForecastFromAPI")]
     public async Task<WeatherForecast> GetFromAPI([FromServices] IExternalAPIService apiService)
     {

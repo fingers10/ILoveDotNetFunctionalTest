@@ -1,6 +1,8 @@
 ﻿using API.DbContexts;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.Data.Sqlite;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -21,6 +23,14 @@ public class CustomWebApiFactory(SharedFixture fixture) : WebApplicationFactory<
             {
                 ["WeatherAPIUrl"] = $"{SharedFixture.WeatherServiceUrl}/"
             }!);
+        });
+
+        builder.ConfigureTestServices(services =>
+        {
+            services.AddAuthentication(TestAuthHandler.SchemeName)
+                .AddScheme<AuthenticationSchemeOptions, TestAuthHandler>(TestAuthHandler.SchemeName, _ => { });
+
+            services.AddScoped(_ => new AuthClaimsProvider());
         });
 
         builder.ConfigureServices(services =>
